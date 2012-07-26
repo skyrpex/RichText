@@ -7,6 +7,7 @@
 
 namespace sfe
 {
+
 RichText::RichText()
   : myCurrentColor(sf::Color::White),
     myCurrentStyle(sf::Text::Regular),
@@ -236,4 +237,5 @@ void RichText::updatePosition() const
     offset.x += rect.width;
   }
 }
+
 }

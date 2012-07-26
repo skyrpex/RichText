@@ -10,7 +10,7 @@
 #include <SFML/System/String.hpp>
 #include <list>
 
-namespace sf
+namespace sfe
 {
 
 class RichText : public sf::Drawable, public sf::Transformable
