@@ -29,7 +29,7 @@ Example
      
     int main()
     {
-      sf::RichText text;
+      sfe::RichText text;
       text << sf::Text::Bold << sf::Color::Cyan << "This"
         << sf::Text::Italic << sf::Color::White << " is cool "
         << sf::Text::Regular << sf::Color::Green << "mate"
