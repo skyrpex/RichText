@@ -55,10 +55,10 @@ RichText & RichText::operator << (const sf::String &string)
                  "You will get visual errors." << std::endl;
 
   // Add string
-  myTexts.resize(myTexts.size()+1);
+  myTexts.push_back(sf::Text());
 
   // Setup string
-  sf::Text &text = *(--myTexts.end());
+  sf::Text &text = myTexts.back();
   text.setColor(myCurrentColor);
   text.setStyle(myCurrentStyle);
   text.setString(string);
