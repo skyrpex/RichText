@@ -2,7 +2,7 @@
 // Headers
 ////////////////////////////////////////////////////////////////////////////////
 #include "RichText.hpp"
-#include <Sfml/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <iostream>
 
 namespace sfe
