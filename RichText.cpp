@@ -2,7 +2,7 @@
 // Headers
 ////////////////////////////////////////////////////////////////////////////////
 #include "RichText.hpp"
-#include <Sfml/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <iostream>
 
 namespace sfe
@@ -55,10 +55,10 @@ RichText & RichText::operator << (const sf::String &string)
                  "You will get visual errors." << std::endl;
 
   // Add string
-  myTexts.resize(myTexts.size()+1);
+  myTexts.push_back(sf::Text());
 
   // Setup string
-  sf::Text &text = *(--myTexts.end());
+  sf::Text &text = myTexts.back();
   text.setColor(myCurrentColor);
   text.setStyle(myCurrentStyle);
   text.setString(string);
@@ -73,7 +73,7 @@ RichText & RichText::operator << (const sf::String &string)
 void RichText::setCharacterSize(unsigned int size)
 {
   // Set character size
-  for(std::list<sf::Text>::iterator it = myTexts.begin();
+  for(collection_type::iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
     it->setCharacterSize(size);
@@ -90,7 +90,7 @@ void RichText::setCharacterSize(unsigned int size)
 void RichText::setFont(const sf::Font &font)
 {
   // Set character size
-  for(std::list<sf::Text>::iterator it = myTexts.begin();
+  for(collection_type::iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
     it->setFont(font);
@@ -120,7 +120,7 @@ void RichText::clear()
 ////////////////////////////////////////////////////////////////////////////////
 // Get text list
 ////////////////////////////////////////////////////////////////////////////////
-const std::list<sf::Text> & RichText::getTextList() const
+const RichText::collection_type & RichText::getTextList() const
 {
   return myTexts;
 }
@@ -172,7 +172,7 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
   states.transform *= getTransform();
 
   // Draw
-  for(std::list<sf::Text>::const_iterator it = myTexts.begin();
+  for(collection_type::const_iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
     // Add transformation
@@ -200,7 +200,7 @@ void RichText::updateSize() const
   // Sum all sizes (height not implemented)
   mySize.x = 0.f;
   mySize.y = myTexts.begin()->getGlobalBounds().height;
-  for(std::list<sf::Text>::const_iterator it = myTexts.begin();
+  for(collection_type::const_iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
     // Update width
@@ -226,7 +226,7 @@ void RichText::updatePosition() const
   sf::Vector2f offset;
 
   // Draw
-  for(std::list<sf::Text>::iterator it = myTexts.begin();
+  for(collection_type::iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
     // Set all the origins to the first one
