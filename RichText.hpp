@@ -8,7 +8,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/String.hpp>
-#include <list>
+#include <vector>
 
 namespace sfe
 {
@@ -19,7 +19,7 @@ public:
   //////////////////////////////////////////////////////////////////////////
   // Typedef for collection type
   //////////////////////////////////////////////////////////////////////////
-  typedef std::list<sf::Text> collection_type;
+  typedef std::vector<sf::Text> collection_type;
 
   //////////////////////////////////////////////////////////////////////////
   // Constructor
