@@ -53,15 +53,17 @@ RichText & RichText::operator << (const sf::String &string)
   if(string.find('\n') != std::string::npos)
     std::cerr << "sfe::RichtText: Oops, character \n found."
                  "You will get visual errors." << std::endl;
-
+                 
+  //String cannot be void
+  //assert(string != "");
+	
   // Add string
-  myTexts.push_back(sf::Text());
+  myTexts.push_back(sf::Text(string));
 
   // Setup string
   sf::Text &text = myTexts.back();
   text.setColor(myCurrentColor);
   text.setStyle(myCurrentStyle);
-  text.setString(string);
 
   // Return
   return *this;
