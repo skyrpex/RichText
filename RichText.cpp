@@ -39,8 +39,8 @@ RichText & RichText::operator << (sf::Text::Style style)
 // Operator << sf::String
 ////////////////////////////////////////////////////////////////////////////////
 /*
-  **	Must parse the strings to look for '\n' characters. If found, we break
-  **	the string into two pieces.
+  **  Must parse the strings to look for '\n' characters. If found, we break
+  **  the string into two pieces.
   */
 RichText & RichText::operator << (const sf::String &string)
 {

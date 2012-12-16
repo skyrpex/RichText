@@ -93,12 +93,12 @@ private:
   // Member data
   //////////////////////////////////////////////////////////////////////////
   mutable collection_type myTexts;	///< List of texts
-  sf::Color myCurrentColor;							///< Last used color
-  sf::Text::Style myCurrentStyle;				///< Last style used
-  mutable sf::Vector2f mySize;					///< Size of the text
-  mutable bool mySizeUpdated;						///< Do we need to recompute the size?
-  mutable bool myPositionUpdated;				///< Do we need to recompute the
-                                        ///< position?
+  sf::Color myCurrentColor;         ///< Last used color
+  sf::Text::Style myCurrentStyle;   ///< Last style used
+  mutable sf::Vector2f mySize;      ///< Size of the text
+  mutable bool mySizeUpdated;       ///< Do we need to recompute the size?
+  mutable bool myPositionUpdated;   ///< Do we need to recompute the
+                                    ///< position?
 };
 
 }
