@@ -4,6 +4,11 @@
 Rich text class for [SFML2](https://github.com/LaurentGomila/SFML/). Allows the
 user to draw lines of text with different styles and colors.
 
+License
+-------
+
+This code is licensed under public domain.
+
 Author
 ------
 
