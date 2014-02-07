@@ -24,7 +24,7 @@ public:
   //////////////////////////////////////////////////////////////////////////
   // Constructor
   //////////////////////////////////////////////////////////////////////////
-  RichText();
+  RichText(std::string fontFilename);
 
   //////////////////////////////////////////////////////////////////////////
   // Operators
@@ -92,9 +92,10 @@ private:
   //////////////////////////////////////////////////////////////////////////
   // Member data
   //////////////////////////////////////////////////////////////////////////
-  mutable collection_type myTexts;	///< List of texts
+  mutable collection_type myTexts;  ///< List of texts
   sf::Color myCurrentColor;         ///< Last used color
   sf::Text::Style myCurrentStyle;   ///< Last style used
+  sf::Font myFont;                  ///< The font used for the texts
   mutable sf::Vector2f mySize;      ///< Size of the text
   mutable bool mySizeUpdated;       ///< Do we need to recompute the size?
   mutable bool myPositionUpdated;   ///< Do we need to recompute the

@@ -8,13 +8,16 @@
 namespace sfe
 {
 
-RichText::RichText()
+RichText::RichText(std::string filename)
   : myCurrentColor(sf::Color::White),
     myCurrentStyle(sf::Text::Regular),
     mySizeUpdated(false),
     myPositionUpdated(false)
 {
-
+  if(!myFont.loadFromFile(filename))
+  {
+    std::cout << "Font " << filename << " not found!\n";
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,17 +56,19 @@ RichText & RichText::operator << (const sf::String &string)
   if(string.find('\n') != std::string::npos)
     std::cerr << "sfe::RichtText: Oops, character \n found."
                  "You will get visual errors." << std::endl;
-                 
+
   //String cannot be void
   //assert(string != "");
-	
+
   // Add string
-  myTexts.push_back(sf::Text(string));
+  myTexts.push_back(sf::Text());
 
   // Setup string
   sf::Text &text = myTexts.back();
+  text.setString(string);
   text.setColor(myCurrentColor);
   text.setStyle(myCurrentStyle);
+  text.setFont(myFont);
 
   // Return
   return *this;
@@ -91,11 +96,14 @@ void RichText::setCharacterSize(unsigned int size)
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::setFont(const sf::Font &font)
 {
+  //Set the object's font for new strings
+  myFont = font;
+
   // Set character size
   for(collection_type::iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
-    it->setFont(font);
+    it->setFont(myFont);
   }
 
   // It is not updated
@@ -141,8 +149,7 @@ unsigned int RichText::getCharacterSize() const
 ////////////////////////////////////////////////////////////////////////////////
 const sf::Font & RichText::getFont() const
 {
-  if(myTexts.size()) return myTexts.begin()->getFont();
-  return sf::Font::getDefaultFont();
+  return myFont;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
