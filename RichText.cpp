@@ -64,7 +64,7 @@ RichText & RichText::operator << (const sf::String &string)
     std::cerr << "sfe::RichtText: Oops, character \\n found."
                  "Let's see what happens ;)." << std::endl;
     size_t newline = string.find('\n');
-    operator<<(string.toWideString().substr(0, newline-1));
+    operator<<(string.toWideString().substr(0, newline));
     line_type val;
     myTexts.push_back(val);
     myCurrentLine++;
@@ -208,11 +208,11 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
   for(collection_type::const_iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
-    // Add transformation
-    //it->setT
     for(line_type::const_iterator it2 = it->begin();
         it2 != it->end(); ++it2)
     {
+      //TODO Add transformation
+      //it->setT
       // Draw text
       target.draw(*it2, states);
     }
@@ -284,7 +284,7 @@ void RichText::updatePosition() const
       const sf::FloatRect rect = it2->getGlobalBounds();
       offset.x += rect.width;
     }
-    offset.y += it->begin()->getGlobalBounds().height;
+    offset.y += myFont.getLineSpacing(myTexts.begin()->begin()->getCharacterSize());
     offset.x = 0.0f;
   }
 }
