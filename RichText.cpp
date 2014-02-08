@@ -12,12 +12,18 @@ RichText::RichText(std::string filename)
   : myCurrentColor(sf::Color::White),
     myCurrentStyle(sf::Text::Regular),
     mySizeUpdated(false),
-    myPositionUpdated(false)
+    myPositionUpdated(false),
+    myCurrentLine(0)
 {
+  //Check if we have our font
   if(!myFont.loadFromFile(filename))
   {
     std::cout << "Font " << filename << " not found!\n";
   }
+  
+  //Set up our collection
+  line_type val;
+  myTexts.push_back(val);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,22 +60,32 @@ RichText & RichText::operator << (const sf::String &string)
   // Find \n characters (assert)
   //assert(string.Find('\n') == std::string::npos);
   if(string.find('\n') != std::string::npos)
-    std::cerr << "sfe::RichtText: Oops, character \n found."
-                 "You will get visual errors." << std::endl;
+  {
+    std::cerr << "sfe::RichtText: Oops, character \\n found."
+                 "Let's see what happens ;)." << std::endl;
+    size_t newline = string.find('\n');
+    operator<<(string.toWideString().substr(0, newline-1));
+    line_type val;
+    myTexts.push_back(val);
+    myCurrentLine++;
+    operator<<(string.toWideString().substr(newline+1));
+  }
+  else
+  {
+    //String cannot be void
+    //assert(string != "");
 
-  //String cannot be void
-  //assert(string != "");
+    // Setup string
+    sf::Text text;
+    text.setString(string);
+    text.setColor(myCurrentColor);
+    text.setStyle(myCurrentStyle);
+    text.setFont(myFont);
 
-  // Add string
-  myTexts.push_back(sf::Text());
+    // Add string
+    myTexts[myCurrentLine].push_back(text);
 
-  // Setup string
-  sf::Text &text = myTexts.back();
-  text.setString(string);
-  text.setColor(myCurrentColor);
-  text.setStyle(myCurrentStyle);
-  text.setFont(myFont);
-
+  }
   // Return
   return *this;
 }
@@ -83,7 +99,11 @@ void RichText::setCharacterSize(unsigned int size)
   for(collection_type::iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
-    it->setCharacterSize(size);
+    for(line_type::iterator it2 = it->begin();
+      it2 != it->end(); ++it2)
+    {
+      it2->setCharacterSize(size);
+    }
   }
 
   // It is not updated
@@ -103,7 +123,11 @@ void RichText::setFont(const sf::Font &font)
   for(collection_type::iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
-    it->setFont(myFont);
+    for(line_type::iterator it2 = it->begin();
+        it2 != it->end(); ++it)
+    {
+      it2->setFont(myFont);
+    }
   }
 
   // It is not updated
@@ -140,7 +164,7 @@ const RichText::collection_type & RichText::getTextList() const
 ////////////////////////////////////////////////////////////////////////////////
 unsigned int RichText::getCharacterSize() const
 {
-  if(myTexts.size()) return myTexts.begin()->getCharacterSize();
+  if(myTexts.size()) return myTexts.begin()->begin()->getCharacterSize();
   return 0;
 }
 
@@ -186,9 +210,12 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
   {
     // Add transformation
     //it->setT
-
-    // Draw text
-    target.draw(*it, states);
+    for(line_type::const_iterator it2 = it->begin();
+        it2 != it->end(); ++it2)
+    {
+      // Draw text
+      target.draw(*it2, states);
+    }
   }
 }
 
@@ -206,14 +233,23 @@ void RichText::updateSize() const
   // It is updated
   mySizeUpdated = true;
 
-  // Sum all sizes (height not implemented)
+  // Sum all sizes
   mySize.x = 0.f;
-  mySize.y = myTexts.begin()->getGlobalBounds().height;
+  mySize.y = myTexts.begin()->begin()->getGlobalBounds().height*myCurrentLine;
   for(collection_type::const_iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
-    // Update width
-    mySize.x += it->getGlobalBounds().width;
+    float lineWidth = 0.0f;
+    for(line_type::const_iterator it2 = it->begin();
+        it2 != it->end(); ++it2)
+    {
+      // Update width
+      lineWidth += it2->getGlobalBounds().width;
+    }
+    if(mySize.x < lineWidth)
+    {
+    	mySize.x = lineWidth;
+    }
   }
 }
 
@@ -238,12 +274,18 @@ void RichText::updatePosition() const
   for(collection_type::iterator it = myTexts.begin();
       it != myTexts.end(); ++it)
   {
-    // Set all the origins to the first one
-    it->setOrigin(it->getPosition() - myTexts.begin()->getPosition() - offset);
+    for(line_type::iterator it2 = it->begin();
+      it2 != it->end(); ++it2)
+    {
+      // Set all the origins to the first one
+      it2->setOrigin(it2->getPosition() - myTexts.begin()->begin()->getPosition() - offset);
 
-    // Set offset
-    const sf::FloatRect rect = it->getGlobalBounds();
-    offset.x += rect.width;
+      // Set offset
+      const sf::FloatRect rect = it2->getGlobalBounds();
+      offset.x += rect.width;
+    }
+    offset.y += it->begin()->getGlobalBounds().height;
+    offset.x = 0.0f;
   }
 }
 
