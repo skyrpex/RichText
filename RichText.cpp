@@ -61,8 +61,6 @@ RichText & RichText::operator << (const sf::String &string)
   //assert(string.Find('\n') == std::string::npos);
   if(string.find('\n') != std::string::npos)
   {
-    std::cerr << "sfe::RichtText: Oops, character \\n found."
-                 "Let's see what happens ;)." << std::endl;
     size_t newline = string.find('\n');
     operator<<(string.toWideString().substr(0, newline));
     line_type val;
@@ -142,6 +140,12 @@ void RichText::clear()
 {
   // Clear text list
   myTexts.clear();
+  
+  //Add the default empty line
+  //If we don't, this function kills the object
+  line_type val;
+  myTexts.push_back(val);
+  myCurrentLine = 0;
 
   // Reset size
   mySize = sf::Vector2f(0.f, 0.f);
