@@ -87,7 +87,7 @@ void RichText::Line::updateGeometry() const
         text.setPosition(m_bounds.width, 0.f);
 
         m_bounds.height = std::max(m_bounds.height, text.getGlobalBounds().height);
-        m_bounds.width += text.getGlobalBounds().height;
+        m_bounds.width += text.getGlobalBounds().width;
     }
 }
 
