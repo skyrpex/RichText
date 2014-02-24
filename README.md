@@ -21,6 +21,9 @@ How to use
 1. Include the header and the source to your project.
 2. Link to SFML2 (obviously :P!).
 
+Note: For a non C++11 ready compilers, there is a [support branch](https://github.com/Skyrpex/RichText/tree/support/no-c%2B%2B11).
+However, it's not guaranteed to be fully updated.
+
 Repository
 ----------
 
