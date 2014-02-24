@@ -15,8 +15,8 @@ namespace sfe
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::setCharacterSize(unsigned int size)
 {
-    for (sf::Text &text : m_texts)
-        text.setCharacterSize(size);
+    for (std::size_t i = 0; i < m_texts.size(); ++i)
+        m_texts[i].setCharacterSize(size);
 
     updateGeometry();
 }
@@ -25,8 +25,8 @@ void RichText::Line::setCharacterSize(unsigned int size)
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::setFont(const sf::Font &font)
 {
-    for (sf::Text &text : m_texts)
-        text.setFont(font);
+    for (std::size_t i = 0; i < m_texts.size(); ++i)
+        m_texts[i].setFont(font);
 
     updateGeometry();
 }
@@ -50,7 +50,7 @@ void RichText::Line::appendText(sf::Text text)
     m_bounds.width += text.getGlobalBounds().width;
 
     // Push back
-    m_texts.push_back(std::move(text));
+    m_texts.push_back(text);
 }
 
 
@@ -73,8 +73,8 @@ void RichText::Line::draw(sf::RenderTarget &target, sf::RenderStates states) con
 {
     states.transform *= getTransform();
 
-    for (const sf::Text &text : m_texts)
-        target.draw(text, states);
+    for (std::size_t i = 0; i < m_texts.size(); ++i)
+        target.draw(m_texts[i], states);
 }
 
 
@@ -83,7 +83,8 @@ void RichText::Line::updateGeometry() const
 {
     m_bounds = sf::FloatRect();
 
-    for (sf::Text &text : m_texts) {
+    for (std::size_t i = 0; i < m_texts.size(); ++i) {
+        sf::Text &text = m_texts[i];
         text.setPosition(m_bounds.width, 0.f);
 
         m_bounds.height = std::max(m_bounds.height, text.getGlobalBounds().height);
@@ -94,7 +95,10 @@ void RichText::Line::updateGeometry() const
 
 ////////////////////////////////////////////////////////////////////////////////
 RichText::RichText()
-    : RichText(nullptr)
+    : m_font(NULL),
+      m_characterSize(30),
+      m_currentColor(sf::Color::White),
+      m_currentStyle(sf::Text::Regular)
 {
 
 }
@@ -102,7 +106,10 @@ RichText::RichText()
 
 ////////////////////////////////////////////////////////////////////////////////
 RichText::RichText(const sf::Font &font)
-    : RichText(&font)
+    : m_font(&font),
+      m_characterSize(30),
+      m_currentColor(sf::Color::White),
+      m_currentStyle(sf::Text::Regular)
 {
 
 }
@@ -132,8 +139,9 @@ std::vector<sf::String> explode(const sf::String &string, sf::Uint32 delimiter) 
     // For each character in the string
     std::vector<sf::String> result;
     sf::String buffer;
-    for (sf::Uint32 character : string) {
+    for (std::size_t i = 0; i < string.getSize(); ++i) {
         // If we've hit the delimiter character
+        sf::Uint32 character = string[i];
         if (character == delimiter) {
             // Add them to the result vector
             result.push_back(buffer);
@@ -163,7 +171,7 @@ RichText & RichText::operator << (const sf::String &string)
     std::vector<sf::String> subStrings = explode(string, '\n');
 
     // Append first substring using the last line
-    auto it = subStrings.begin();
+    std::vector<sf::String>::iterator it = subStrings.begin();
     if (it != subStrings.end()) {
         // If there isn't any line, just create it
         if (m_lines.empty())
@@ -186,7 +194,7 @@ RichText & RichText::operator << (const sf::String &string)
         Line line;
         line.setPosition(0.f, m_bounds.height);
         line.appendText(createText(*it));
-        m_lines.push_back(std::move(line));
+        m_lines.push_back(line);
 
         // Update bounds
         m_bounds.height += line.getGlobalBounds().height;
@@ -209,8 +217,8 @@ void RichText::setCharacterSize(unsigned int size)
     m_characterSize = size;
 
     // Set texts character size
-    for (Line &line : m_lines)
-        line.setCharacterSize(size);
+    for (std::size_t i = 0; i < m_lines.size(); ++i)
+        m_lines[i].setCharacterSize(size);
 
     updateGeometry();
 }
@@ -227,8 +235,8 @@ void RichText::setFont(const sf::Font &font)
     m_font = &font;
 
     // Set texts font
-    for (Line &line : m_lines)
-        line.setFont(font);
+    for (std::size_t i = 0; i < m_lines.size(); ++i)
+            m_lines[i].setFont(font);
 
     updateGeometry();
 }
@@ -285,19 +293,8 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
 
-    for (const Line &line : m_lines)
-        target.draw(line, states);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-RichText::RichText(const sf::Font *font)
-    : m_font(font),
-      m_characterSize(30),
-      m_currentColor(sf::Color::White),
-      m_currentStyle(sf::Text::Regular)
-{
-
+    for (std::size_t i = 0; i < m_lines.size(); ++i)
+        target.draw(m_lines[i], states);
 }
 
 
@@ -320,7 +317,8 @@ void RichText::updateGeometry() const
 {
     m_bounds = sf::FloatRect();
 
-    for (Line &line : m_lines) {
+    for (std::size_t i = 0; i < m_lines.size(); ++i) {
+        Line &line = m_lines[i];
         line.setPosition(0.f, m_bounds.height);
 
         m_bounds.height += line.getGlobalBounds().height;

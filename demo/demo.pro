@@ -2,7 +2,6 @@ TEMPLATE = app
 CONFIG -= qt
 CONFIG -= app_bundle
 CONFIG -= console
-CONFIG += C++11
 
 INCLUDEPATH += SFML
 
