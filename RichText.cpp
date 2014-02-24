@@ -2,225 +2,329 @@
 // Headers
 ////////////////////////////////////////////////////////////////////////////////
 #include "RichText.hpp"
+
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <iostream>
+
+#include <SFML/System/String.hpp>
 
 namespace sfe
 {
 
-RichText::RichText(const sf::Font &font)
-    : myFont(&font),
-      myCurrentColor(sf::Color::White),
-      myCurrentStyle(sf::Text::Regular),
-      mySizeUpdated(false)
+////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::setCharacterSize(unsigned int size)
+{
+    for (sf::Text &text : m_texts)
+        text.setCharacterSize(size);
+
+    updateGeometry();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::setFont(const sf::Font &font)
+{
+    for (sf::Text &text : m_texts)
+        text.setFont(font);
+
+    updateGeometry();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+const std::vector<sf::Text> &RichText::Line::getTexts() const
+{
+    return m_texts;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::appendText(sf::Text text)
+{
+    // Set text offset
+    text.setPosition(m_bounds.width, 0.f);
+
+    // Push back
+    m_texts.push_back(std::move(text));
+
+    // Update bounds
+    m_bounds.height = std::max(m_bounds.height, text.getGlobalBounds().height);
+    m_bounds.width += text.getGlobalBounds().width;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+sf::FloatRect RichText::Line::getLocalBounds() const
+{
+    return m_bounds;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+sf::FloatRect RichText::Line::getGlobalBounds() const
+{
+    return getTransform().transformRect(getLocalBounds());
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    states.transform *= getTransform();
+
+    for (const sf::Text &text : m_texts)
+        target.draw(text, states);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::updateGeometry() const
+{
+    m_bounds = sf::FloatRect();
+
+    for (sf::Text &text : m_texts) {
+        text.setPosition(m_bounds.width, 0.f);
+
+        m_bounds.height = std::max(m_bounds.height, text.getGlobalBounds().height);
+        m_bounds.width += text.getGlobalBounds().height;
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+RichText::RichText()
+    : RichText(nullptr)
 {
 
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
-// Operator << sf::Color
+RichText::RichText(const sf::Font &font)
+    : RichText(&font)
+{
+
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 RichText & RichText::operator << (const sf::Color &color)
 {
-    myCurrentColor = color;
+    m_currentColor = color;
     return *this;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Operator << sf::Text::Style
+
 ////////////////////////////////////////////////////////////////////////////////
 RichText & RichText::operator << (sf::Text::Style style)
 {
-    myCurrentStyle = style;
+    m_currentStyle = style;
     return *this;
 }
 
-//std::vector<std::string> explode(const std::string &string, char delim)
-//{
-//    std::vector<std::string> result;
-//    std::istringstream iss(string);
 
-//    for (std::string token; std::getline(iss, token, delim); ) {
-//        result.push_back(std::move(token));
-//    }
-
-//    return result;
-//}
-
-std::vector<std::string> explode(const std::string &string, char delimiter) {
-    std::string next;
-    std::vector<std::string> result;
+////////////////////////////////////////////////////////////////////////////////
+std::vector<sf::String> explode(const sf::String &string, sf::Uint32 delimiter) {
+    if (string.isEmpty())
+        return std::vector<sf::String>();
 
     // For each character in the string
-    for (auto it = string.begin(); it != string.end(); it++) {
-        // If we've hit the terminal character
-        if (*it == delimiter) {
-            // If we have some characters accumulated
-            if (!next.empty()) {
-                // Add them to the result vector
-                result.push_back(next);
-                next.clear();
-            }
+    std::vector<sf::String> result;
+    sf::String buffer;
+    for (sf::Uint32 character : string) {
+        // If we've hit the delimiter character
+        if (character == delimiter) {
+            // Add them to the result vector
+            result.push_back(buffer);
+            buffer.clear();
         } else {
             // Accumulate the next character into the sequence
-            next += *it;
+            buffer += character;
         }
     }
 
-    if (!next.empty())
-         result.push_back(next);
+    // Add to the result if buffer still has contents or if the last character is a delimiter
+    if (!buffer.isEmpty() || string[string.getSize() - 1] == delimiter)
+        result.push_back(buffer);
 
     return result;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Operator << sf::String
+
 ////////////////////////////////////////////////////////////////////////////////
 RichText & RichText::operator << (const sf::String &string)
 {
-    // It is not updated
-    mySizeUpdated = false;
+    // Maybe skip
+    if (string.isEmpty())
+        return *this;
 
-    // Add lines
-    std::vector<std::string> lines = explode(string, '\n');
-    for (const std::string &line : lines) {
-        sf::Text text(line, *myFont);
-        text.setFont(*myFont);
-        text.setColor(myCurrentColor);
-        text.setStyle(myCurrentStyle);
-        myTexts.push_back(std::move(text));
+    // Explode into substrings
+    std::vector<sf::String> subStrings = explode(string, '\n');
+
+    // Append first substring using the last line
+    auto it = subStrings.begin();
+    if (it != subStrings.end()) {
+        // If there isn't any line, just create it
+        if (m_lines.empty())
+            m_lines.resize(1);
+
+        // Remove last line's height
+        Line &line = m_lines.back();
+        m_bounds.height -= line.getGlobalBounds().height;
+
+        // Append text
+        line.appendText(createText(*it));
+
+        // Update bounds
+        m_bounds.height += line.getGlobalBounds().height;
+        m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
+    }
+
+    // Append the rest of substrings as new lines
+    while (++it != subStrings.end()) {
+        Line line;
+        line.setPosition(0.f, m_bounds.height);
+        line.appendText(createText(*it));
+        m_lines.push_back(std::move(line));
+
+        // Update bounds
+        m_bounds.height += line.getGlobalBounds().height;
+        m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
     }
 
     // Return
     return *this;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Set size
+
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::setCharacterSize(unsigned int size)
 {
-    // Set character size
-    for (auto it = myTexts.begin(); it != myTexts.end(); ++it) {
-        it->setCharacterSize(size);
-    }
+    // Maybe skip
+    if (m_characterSize == size)
+        return;
 
-    // It is not updated
-    mySizeUpdated = false;
+    // Update character size
+    m_characterSize = size;
+
+    // Set texts character size
+    for (Line &line : m_lines)
+        line.setCharacterSize(size);
+
+    updateGeometry();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Set font
+
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::setFont(const sf::Font &font)
 {
-    myFont = &font;
+    // Maybe skip
+    if (m_font == &font)
+        return;
 
-    // Set character size
-    for (auto it = myTexts.begin(); it != myTexts.end(); ++it) {
-        it->setFont(font);
-    }
+    // Update font
+    m_font = &font;
 
-    // It is not updated
-    mySizeUpdated = false;
+    // Set texts font
+    for (Line &line : m_lines)
+        line.setFont(font);
+
+    updateGeometry();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Clear
+
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::clear()
 {
-    // Clear text list
-    myTexts.clear();
+    // Clear texts
+    m_lines.clear();
 
-    // Reset size
-    mySize = sf::Vector2f(0.f, 0.f);
-
-    // It is updated
-    mySizeUpdated = true;
+    // Reset bounds
+    m_bounds = sf::FloatRect();
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
-// Get text list
-////////////////////////////////////////////////////////////////////////////////
-const std::vector<sf::Text> & RichText::getTextList() const
+const std::vector<RichText::Line> &RichText::getLines() const
 {
-    return myTexts;
+    return m_lines;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Get character size
+
 ////////////////////////////////////////////////////////////////////////////////
 unsigned int RichText::getCharacterSize() const
 {
-    if (myTexts.size())
-        return myTexts.begin()->getCharacterSize();
-    return 0;
+    return m_characterSize;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Get font
+
 ////////////////////////////////////////////////////////////////////////////////
 const sf::Font *RichText::getFont() const
 {
-    return myFont;
+    return m_font;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Get width
-////////////////////////////////////////////////////////////////////////////////
-float RichText::getWidth() const
+
+////////////////////////////////////////////////////////////
+sf::FloatRect RichText::getLocalBounds() const
 {
-    updateSize();
-    return mySize.x;
+    return m_bounds;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Get height
-////////////////////////////////////////////////////////////////////////////////
-float RichText::getHeight() const
+
+////////////////////////////////////////////////////////////
+sf::FloatRect RichText::getGlobalBounds() const
 {
-    updateSize();
-    return mySize.y;
+    return getTransform().transformRect(getLocalBounds());
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Render
+
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
 
-    for (const sf::Text &text : myTexts) {
-        int height =  text.getGlobalBounds().height;
-        target.draw(text, states);
-
-        states.transform.translate(0, height);
-    }
+    for (const Line &line : m_lines)
+        target.draw(line, states);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
-// Update size
-////////////////////////////////////////////////////////////////////////////////
-void RichText::updateSize() const
+RichText::RichText(const sf::Font *font)
+    : m_font(font),
+      m_characterSize(30),
+      m_currentColor(sf::Color::White),
+      m_currentStyle(sf::Text::Regular)
 {
-    // Return if updated
-    if (mySizeUpdated)
-        return;
 
-    // Return if empty
-    if (myTexts.begin() == myTexts.end())
-        return;
+}
 
-    // It is updated
-    mySizeUpdated = true;
 
-    // Sum all sizes (height not implemented)
-    mySize.x = 0.f;
-    mySize.y = myTexts.begin()->getGlobalBounds().height;
-    for (auto it = myTexts.begin(); it != myTexts.end(); ++it) {
-        // Update width
-        mySize.x += it->getGlobalBounds().width;
+////////////////////////////////////////////////////////////////////////////////
+sf::Text RichText::createText(const sf::String &string) const
+{
+    sf::Text text;
+    text.setString(string);
+    text.setColor(m_currentColor);
+    text.setStyle(m_currentStyle);
+    if (m_font)
+        text.setFont(*m_font);
+
+    return text;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void RichText::updateGeometry() const
+{
+    m_bounds = sf::FloatRect();
+
+    for (Line &line : m_lines) {
+        line.setPosition(0.f, m_bounds.height);
+
+        m_bounds.height += line.getGlobalBounds().height;
+        m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
     }
 }
 
