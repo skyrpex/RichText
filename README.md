@@ -9,8 +9,8 @@ License
 
 This code is licensed under public domain.
 
-Author
-------
+Authors
+-------
 
 * [Cristian Pallarés](https://github.com/Skyrpex) - Original code
 * [Lukas Dürrenberger](https://github.com/eXpl0it3r/) - Conversion to the new SFML2 API
