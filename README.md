@@ -20,6 +20,7 @@ How to use
 
 1. Include the header and the source to your project.
 2. Link to SFML2 (obviously :P!).
+3. Use a C++11 ready compiler.
 
 Repository
 ----------
