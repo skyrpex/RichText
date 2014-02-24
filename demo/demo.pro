@@ -9,8 +9,7 @@ INCLUDEPATH += SFML
 LIBS += -lsfml-system-d -lsfml-window-d -lsfml-graphics-d -ljpeg -lGLEW
 
 SOURCES += main.cpp \
-    RichText.cpp
+    ../RichText.cpp
 
 HEADERS += \
-    RichText.hpp
-
+    ../RichText.hpp
