@@ -45,12 +45,12 @@ void RichText::Line::appendText(sf::Text text)
     // Set text offset
     text.setPosition(m_bounds.width, 0.f);
 
-    // Push back
-    m_texts.push_back(std::move(text));
-
     // Update bounds
     m_bounds.height = std::max(m_bounds.height, text.getGlobalBounds().height);
     m_bounds.width += text.getGlobalBounds().width;
+
+    // Push back
+    m_texts.push_back(std::move(text));
 }
 
 
