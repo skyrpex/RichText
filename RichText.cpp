@@ -308,6 +308,7 @@ sf::Text RichText::createText(const sf::String &string) const
     text.setString(string);
     text.setColor(m_currentColor);
     text.setStyle(m_currentStyle);
+    text.setCharacterSize(m_characterSize);
     if (m_font)
         text.setFont(*m_font);
 
