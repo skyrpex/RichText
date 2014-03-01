@@ -323,7 +323,7 @@ void RichText::updateGeometry() const
     for (Line &line : m_lines) {
         line.setPosition(0.f, m_bounds.height);
 
-        m_bounds.height += line.getGlobalBounds().height;
+        m_bounds.height += m_font->getLineSpacing(m_characterSize);
         m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
     }
 }
