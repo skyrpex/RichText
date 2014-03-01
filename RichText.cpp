@@ -86,7 +86,8 @@ void RichText::Line::updateGeometry() const
     for (sf::Text &text : m_texts) {
         text.setPosition(m_bounds.width, 0.f);
 
-        m_bounds.height = std::max(m_bounds.height, text.getGlobalBounds().height);
+        m_bounds.height = std::max(m_bounds.height, 
+            float(text.getFont()->getLineSpacing(text.getCharacterSize())));
         m_bounds.width += text.getGlobalBounds().width;
     }
 }
@@ -323,7 +324,7 @@ void RichText::updateGeometry() const
     for (Line &line : m_lines) {
         line.setPosition(0.f, m_bounds.height);
 
-        m_bounds.height += m_font->getLineSpacing(m_characterSize);
+        m_bounds.height += line.getGlobalBounds().height;
         m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
     }
 }
