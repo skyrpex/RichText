@@ -43,11 +43,7 @@ const std::vector<sf::Text> &RichText::Line::getTexts() const
 void RichText::Line::appendText(sf::Text text)
 {
     // Set text offset
-    text.setPosition(m_bounds.width, 0.f);
-
-    // Update bounds
-    m_bounds.height = std::max(m_bounds.height, text.getGlobalBounds().height);
-    m_bounds.width += text.getGlobalBounds().width;
+    updateTextAndGeometry(text);
 
     // Push back
     m_texts.push_back(std::move(text));
@@ -83,13 +79,21 @@ void RichText::Line::updateGeometry() const
 {
     m_bounds = sf::FloatRect();
 
-    for (sf::Text &text : m_texts) {
-        text.setPosition(m_bounds.width, 0.f);
+    for (sf::Text &text : m_texts)
+        updateTextAndGeometry(text);
+}
 
-        m_bounds.height = std::max(m_bounds.height, 
-            float(text.getFont()->getLineSpacing(text.getCharacterSize())));
-        m_bounds.width += text.getGlobalBounds().width;
-    }
+
+////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::updateTextAndGeometry(sf::Text &text) const
+{
+    // Set text offset
+    text.setPosition(m_bounds.width, 0.f);
+
+    // Update bounds
+    int lineSpacing = text.getFont()->getLineSpacing(text.getCharacterSize());
+    m_bounds.height = std::max(m_bounds.height, static_cast<float>(lineSpacing));
+    m_bounds.width += text.getGlobalBounds().width;
 }
 
 
