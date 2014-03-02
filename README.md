@@ -9,8 +9,8 @@ License
 
 This code is licensed under public domain.
 
-Author
-------
+Authors
+-------
 
 * [Cristian Pallarés](https://github.com/Skyrpex) - Original code
 * [Lukas Dürrenberger](https://github.com/eXpl0it3r/) - Conversion to the new SFML2 API
@@ -20,6 +20,10 @@ How to use
 
 1. Include the header and the source to your project.
 2. Link to SFML2 (obviously :P!).
+3. Use a C++11 ready compiler.
+
+Note: For a non C++11 ready compilers, there is a [support branch](https://github.com/Skyrpex/RichText/tree/support/no-c%2B%2B11).
+However, it's not guaranteed to be fully updated.
 
 Repository
 ----------
