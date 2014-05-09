@@ -13,6 +13,22 @@ namespace sfe
 {
 
 ////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::setCharacter(size_t pos, sf::Uint32 character)
+{
+    // Store our current position in the text vector
+    size_t arrayIndex = 0;
+    // Here, we select the right sf::Text to change
+    while(pos > m_texts[arrayIndex].getString().getSize())
+    {
+        pos -= m_texts[arrayIndex].getString().getSize();
+        arrayIndex += 1;
+    }
+    sf::String string = m_texts[arrayIndex].getString();
+    string[pos] = character;
+    m_texts[arrayIndex].setString(string);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::setCharacterSize(unsigned int size)
 {
     for (sf::Text &text : m_texts)
@@ -202,6 +218,11 @@ RichText & RichText::operator << (const sf::String &string)
     return *this;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void RichText::setCharacter(size_t line, size_t pos, sf::Uint32 character)
+{
+    m_lines[line].setCharacter(pos, character);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::setCharacterSize(unsigned int size)
