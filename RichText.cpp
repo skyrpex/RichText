@@ -18,7 +18,7 @@ void RichText::Line::setCharacter(size_t pos, sf::Uint32 character)
     // Store our current position in the text vector
     size_t arrayIndex = 0;
     // Here, we select the right sf::Text to change
-    while(pos > m_texts[arrayIndex].getString().getSize())
+    while(pos >= m_texts[arrayIndex].getString().getSize())
     {
         pos -= m_texts[arrayIndex].getString().getSize();
         arrayIndex += 1;
@@ -26,6 +26,7 @@ void RichText::Line::setCharacter(size_t pos, sf::Uint32 character)
     sf::String string = m_texts[arrayIndex].getString();
     string[pos] = character;
     m_texts[arrayIndex].setString(string);
+    updateGeometry();
 }
 
 
@@ -54,12 +55,13 @@ sf::Uint32 RichText::Line::getCharacter(size_t pos) const
 {
     // Similar to setCharacter()
     size_t arrayIndex = 0;
-    while(pos > m_texts[arrayIndex].getString().getSize())
+    while(pos >= m_texts[arrayIndex].getString().getSize())
     {
         pos -= m_texts[arrayIndex].getString().getSize();
         arrayIndex += 1;
     }
-    return m_texts[arrayIndex].getString()[pos];
+    sf::String string= m_texts[arrayIndex].getString();
+    return string[pos];
 }
 
 
@@ -237,6 +239,7 @@ RichText & RichText::operator << (const sf::String &string)
 void RichText::setCharacter(size_t line, size_t pos, sf::Uint32 character)
 {
     m_lines[line].setCharacter(pos, character);
+    updateGeometry();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
