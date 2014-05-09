@@ -28,6 +28,7 @@ void RichText::Line::setCharacter(size_t pos, sf::Uint32 character)
     m_texts[arrayIndex].setString(string);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::setCharacterSize(unsigned int size)
 {
@@ -45,6 +46,20 @@ void RichText::Line::setFont(const sf::Font &font)
         text.setFont(font);
 
     updateGeometry();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+sf::Uint32 RichText::Line::getCharacter(size_t pos) const
+{
+    // Similar to setCharacter()
+    size_t arrayIndex = 0;
+    while(pos > m_texts[arrayIndex].getString().getSize())
+    {
+        pos -= m_texts[arrayIndex].getString().getSize();
+        arrayIndex += 1;
+    }
+    return m_texts[arrayIndex].getString()[pos];
 }
 
 
@@ -268,6 +283,13 @@ void RichText::clear()
 
     // Reset bounds
     m_bounds = sf::FloatRect();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+sf::Uint32 RichText::getCharacter(size_t line, size_t pos) const
+{
+    return m_lines[line].getCharacter(pos);
 }
 
 
