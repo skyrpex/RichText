@@ -13,15 +13,17 @@ namespace sfe
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-void RichText::Line::setCharacter(size_t pos, sf::Uint32 character)
+void RichText::Line::setCharacter(std::size_t pos, sf::Uint32 character)
 {
     // Store our current position in the text vector
-    size_t arrayIndex = 0;
-    // Here, we select the right sf::Text to change
-    while(pos >= m_texts[arrayIndex].getString().getSize())
+    std::size_t arrayIndex = 0;
+    for(; ; ++arrayIndex)
     {
-        pos -= m_texts[arrayIndex].getString().getSize();
-        arrayIndex += 1;
+        // Here, we select the right sf::Text to change
+        if(pos >= m_texts[arrayIndex].getString().getSize())
+            pos -= m_texts[arrayIndex].getString().getSize();
+        else
+            break;
     }
     sf::String string = m_texts[arrayIndex].getString();
     string[pos] = character;
@@ -51,14 +53,16 @@ void RichText::Line::setFont(const sf::Font &font)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-sf::Uint32 RichText::Line::getCharacter(size_t pos) const
+sf::Uint32 RichText::Line::getCharacter(std::size_t pos) const
 {
     // Similar to setCharacter()
-    size_t arrayIndex = 0;
-    while(pos >= m_texts[arrayIndex].getString().getSize())
+    std::size_t arrayIndex = 0;
+    for(; ; ++arrayIndex)
     {
-        pos -= m_texts[arrayIndex].getString().getSize();
-        arrayIndex += 1;
+        if(pos >= m_texts[arrayIndex].getString().getSize())
+            pos -= m_texts[arrayIndex].getString().getSize();
+        else
+            break;
     }
     sf::String string= m_texts[arrayIndex].getString();
     return string[pos];
@@ -236,7 +240,7 @@ RichText & RichText::operator << (const sf::String &string)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void RichText::setCharacter(size_t line, size_t pos, sf::Uint32 character)
+void RichText::setCharacter(std::size_t line, std::size_t pos, sf::Uint32 character)
 {
     m_lines[line].setCharacter(pos, character);
     updateGeometry();
@@ -290,7 +294,7 @@ void RichText::clear()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-sf::Uint32 RichText::getCharacter(size_t line, size_t pos) const
+sf::Uint32 RichText::getCharacter(std::size_t line, std::size_t pos) const
 {
     return m_lines[line].getCharacter(pos);
 }
