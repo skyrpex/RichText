@@ -13,6 +13,24 @@ namespace sfe
 {
 
 ////////////////////////////////////////////////////////////////////////////////
+void RichText::Line::setCharacter(size_t pos, sf::Uint32 character)
+{
+    // Store our current position in the text vector
+    size_t arrayIndex = 0;
+    // Here, we select the right sf::Text to change
+    while(pos >= m_texts[arrayIndex].getString().getSize())
+    {
+        pos -= m_texts[arrayIndex].getString().getSize();
+        arrayIndex += 1;
+    }
+    sf::String string = m_texts[arrayIndex].getString();
+    string[pos] = character;
+    m_texts[arrayIndex].setString(string);
+    updateGeometry();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::setCharacterSize(unsigned int size)
 {
     for (sf::Text &text : m_texts)
@@ -29,6 +47,21 @@ void RichText::Line::setFont(const sf::Font &font)
         text.setFont(font);
 
     updateGeometry();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+sf::Uint32 RichText::Line::getCharacter(size_t pos) const
+{
+    // Similar to setCharacter()
+    size_t arrayIndex = 0;
+    while(pos >= m_texts[arrayIndex].getString().getSize())
+    {
+        pos -= m_texts[arrayIndex].getString().getSize();
+        arrayIndex += 1;
+    }
+    sf::String string= m_texts[arrayIndex].getString();
+    return string[pos];
 }
 
 
@@ -202,6 +235,12 @@ RichText & RichText::operator << (const sf::String &string)
     return *this;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void RichText::setCharacter(size_t line, size_t pos, sf::Uint32 character)
+{
+    m_lines[line].setCharacter(pos, character);
+    updateGeometry();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::setCharacterSize(unsigned int size)
@@ -247,6 +286,13 @@ void RichText::clear()
 
     // Reset bounds
     m_bounds = sf::FloatRect();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+sf::Uint32 RichText::getCharacter(size_t line, size_t pos) const
+{
+    return m_lines[line].getCharacter(pos);
 }
 
 
