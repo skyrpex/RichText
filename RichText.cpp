@@ -15,16 +15,10 @@ namespace sfe
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::setCharacter(std::size_t pos, sf::Uint32 character)
 {
-    // Store our current position in the text vector
-    std::size_t arrayIndex = 0;
-    // Here, we select the right sf::Text to change
-    for (; pos >= m_texts[arrayIndex].getString().getSize(); ++arrayIndex)
-    {
-        pos -= m_texts[arrayIndex].getString().getSize();
-    }
-    sf::String string = m_texts[arrayIndex].getString();
+    sf::Text& text = convertLinePosToLocal(pos);
+    sf::String string = text.getString();
     string[pos] = character;
-    m_texts[arrayIndex].setString(string);
+    text.setString(string);
     updateGeometry();
 }
 
@@ -53,12 +47,8 @@ void RichText::Line::setFont(const sf::Font &font)
 sf::Uint32 RichText::Line::getCharacter(std::size_t pos) const
 {
     // Similar to setCharacter()
-    std::size_t arrayIndex = 0;
-    for (; pos >= m_texts[arrayIndex].getString().getSize(); ++arrayIndex)
-    {
-        pos -= m_texts[arrayIndex].getString().getSize();
-    }
-    sf::String string = m_texts[arrayIndex].getString();
+    sf::Text& text = convertLinePosToLocal(pos);
+    sf::String string = text.getString();
     return string[pos];
 }
 
@@ -102,6 +92,20 @@ void RichText::Line::draw(sf::RenderTarget &target, sf::RenderStates states) con
 
     for (const sf::Text &text : m_texts)
         target.draw(text, states);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+sf::Text& RichText::Line::convertLinePosToLocal(std::size_t& pos) const
+{
+    // Store our current position in the text vector
+    std::size_t arrayIndex = 0;
+    // Here, we select the right sf::Text to change
+    for (; pos >= m_texts[arrayIndex].getString().getSize(); ++arrayIndex)
+    {
+        pos -= m_texts[arrayIndex].getString().getSize();
+    }
+    return m_texts[arrayIndex];
 }
 
 
