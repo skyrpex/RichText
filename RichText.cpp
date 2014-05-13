@@ -257,6 +257,7 @@ RichText & RichText::operator << (const sf::String &string)
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::setCharacter(std::size_t line, std::size_t pos, sf::Uint32 character)
 {
+    assert(line < m_lines.size());
     m_lines[line].setCharacter(pos, character);
     updateGeometry();
 }
@@ -311,6 +312,7 @@ void RichText::clear()
 ////////////////////////////////////////////////////////////////////////////////
 sf::Uint32 RichText::getCharacter(std::size_t line, std::size_t pos) const
 {
+    assert(line < m_lines.size());
     return m_lines[line].getCharacter(pos);
 }
 
