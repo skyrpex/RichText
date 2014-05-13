@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////////////////////////
+#include <cassert>
+
 #include "RichText.hpp"
 
 #include <SFML/Graphics/Font.hpp>
@@ -40,6 +42,18 @@ void RichText::Line::setFont(const sf::Font &font)
         text.setFont(font);
 
     updateGeometry();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+std::size_t RichText::Line::getLength() const
+{
+    std::size_t count = 0;
+    for(sf::Text &i : m_texts)
+    {
+        count += i.getString().getSize();
+    }
+    return count;
 }
 
 
@@ -98,6 +112,9 @@ void RichText::Line::draw(sf::RenderTarget &target, sf::RenderStates states) con
 ////////////////////////////////////////////////////////////////////////////////
 sf::Text& RichText::Line::convertLinePosToLocal(std::size_t& pos) const
 {
+    // Trying to access something out-of-bounds is Undefined Behaviour.
+    // Let's not let that happen, OK?
+    assert(pos < getLength());
     // Store our current position in the text vector
     std::size_t arrayIndex = 0;
     // Here, we select the right sf::Text to change
