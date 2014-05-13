@@ -49,9 +49,9 @@ void RichText::Line::setFont(const sf::Font &font)
 std::size_t RichText::Line::getLength() const
 {
     std::size_t count = 0;
-    for(sf::Text &i : m_texts)
+    for(sf::Text &text : m_texts)
     {
-        count += i.getString().getSize();
+        count += text.getString().getSize();
     }
     return count;
 }
