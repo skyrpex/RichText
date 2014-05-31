@@ -17,7 +17,7 @@ namespace sfe
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::setCharacter(std::size_t pos, sf::Uint32 character)
 {
-    sf::Text& text = convertLinePosToLocal(pos);
+    sf::Text& text = m_texts[convertLinePosToLocal(pos)];
     sf::String string = text.getString();
     string[pos] = character;
     text.setString(string);
@@ -61,7 +61,7 @@ std::size_t RichText::Line::getLength() const
 sf::Uint32 RichText::Line::getCharacter(std::size_t pos) const
 {
     // Similar to setCharacter()
-    sf::Text& text = convertLinePosToLocal(pos);
+    sf::Text& text = m_texts[convertLinePosToLocal(pos)];
     sf::String string = text.getString();
     return string[pos];
 }
@@ -110,7 +110,7 @@ void RichText::Line::draw(sf::RenderTarget &target, sf::RenderStates states) con
 
 
 ////////////////////////////////////////////////////////////////////////////////
-sf::Text& RichText::Line::convertLinePosToLocal(std::size_t& pos) const
+std::size_t RichText::Line::convertLinePosToLocal(std::size_t& pos) const
 {
     // Trying to access something out-of-bounds is Undefined Behaviour.
     // Let's not let that happen, OK?
@@ -122,7 +122,7 @@ sf::Text& RichText::Line::convertLinePosToLocal(std::size_t& pos) const
     {
         pos -= m_texts[arrayIndex].getString().getSize();
     }
-    return m_texts[arrayIndex];
+    return arrayIndex;
 }
 
 

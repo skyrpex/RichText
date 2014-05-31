@@ -89,9 +89,10 @@ public:
 
     private:
         //////////////////////////////////////////////////////////////////////
-        // Get the string and character referenced by a line-wide position.
+        // Get the index of the sf::Text containing the pos'th character.
+        // Also changes pos to the position of the character in the sf::Text.
         //////////////////////////////////////////////////////////////////////
-        sf::Text& convertLinePosToLocal(std::size_t& pos) const;
+        std::size_t convertLinePosToLocal(std::size_t& pos) const;
  
         //////////////////////////////////////////////////////////////////////
         // Update geometry
