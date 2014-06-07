@@ -127,6 +127,17 @@ std::size_t RichText::Line::convertLinePosToLocal(std::size_t& pos) const
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// TODO: Replace all calls to this with the sf::String::substring function
+//       when SFML 2.2 comes out.
+////////////////////////////////////////////////////////////////////////////////
+sf::String substring(sf::String str, std::size_t start, std::size_t length = std::string::npos)
+{
+    std::basic_string<sf::Uint32> mainString(str.getData());
+    return sf::String(mainString.substr(start, length));
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::updateGeometry() const
 {
     m_bounds = sf::FloatRect();
