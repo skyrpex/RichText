@@ -169,17 +169,6 @@ std::size_t RichText::Line::convertLinePosToLocal(std::size_t& pos) const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// TODO: Replace all calls to this with the sf::String::substring function
-//       when SFML 2.2 comes out.
-////////////////////////////////////////////////////////////////////////////////
-sf::String substring(sf::String str, std::size_t start, std::size_t length = std::string::npos)
-{
-    std::basic_string<sf::Uint32> mainString(str.getData());
-    return sf::String(mainString.substr(start, length));
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::isolateCharacter(std::size_t pos)
 {
     std::size_t localPos = pos;
@@ -192,14 +181,14 @@ void RichText::Line::isolateCharacter(std::size_t pos)
     sf::Text temp = copy;
     if(localPos != copy.getString().getSize() - 1)
     {
-        temp.setString(substring(copy.getString(), localPos+1));
+        temp.setString(copy.getString().substring(localPos+1));
         m_texts.insert(m_texts.begin() + index, temp);
     }
-    temp.setString(substring(copy.getString(), localPos, 1));
+    temp.setString(copy.getString().substring(localPos, 1));
     m_texts.insert(m_texts.begin() + index, temp);
     if(localPos != 0)
     {
-        temp.setString(substring(copy.getString(), 0, localPos));
+        temp.setString(copy.getString().substring(0, localPos));
         m_texts.insert(m_texts.begin() + index, temp);
     }
 }
