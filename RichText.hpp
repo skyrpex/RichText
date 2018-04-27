@@ -172,7 +172,7 @@ private:
     const sf::Font *m_font;            ///< Font
     unsigned int m_characterSize;      ///< Character size
     mutable sf::FloatRect m_bounds;    ///< Local bounds
-    sf::Color m_currentColor;          ///< Last used color
+    sf::Color m_currentFillColor;      ///< Last used fill color
     sf::Text::Style m_currentStyle;    ///< Last style used
 };
 

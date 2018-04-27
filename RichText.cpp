@@ -116,7 +116,7 @@ RichText::RichText(const sf::Font &font)
 ////////////////////////////////////////////////////////////////////////////////
 RichText & RichText::operator << (const sf::Color &color)
 {
-    m_currentColor = color;
+    m_currentFillColor = color;
     return *this;
 }
 
@@ -299,7 +299,7 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 RichText::RichText(const sf::Font *font)
     : m_font(font),
       m_characterSize(30),
-      m_currentColor(sf::Color::White),
+      m_currentFillColor(sf::Color::White),
       m_currentStyle(sf::Text::Regular)
 {
 
@@ -311,7 +311,7 @@ sf::Text RichText::createText(const sf::String &string) const
 {
     sf::Text text;
     text.setString(string);
-    text.setColor(m_currentColor);
+    text.setFillColor(m_currentFillColor);
     text.setStyle(m_currentStyle);
     text.setCharacterSize(m_characterSize);
     if (m_font)
