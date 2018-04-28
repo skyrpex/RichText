@@ -3,10 +3,6 @@
 Rich text class for [SFML 2](https://github.com/SFML/SFML/). Allows the
 user to draw lines of text with different styles and colors.
 
-## License
-
-This code is available under MIT License or Public Domain -- choose whichever you prefer.
-
 ## Authors
 
 * [Cristian Pallarés](https://github.com/Skyrpex/) - Original code
@@ -47,7 +43,7 @@ int main()
     text << sf::Text::Bold       << sf::Color::Cyan  << "This "
          << sf::Text::Italic     << sf::Color::White << "is\nan\n"
          << sf::Text::Regular    << sf::Color::Green << "example"
-            << sf::Color::White     << ".\n"
+         << sf::Color::White     << ".\n"
          << sf::Text::Underlined << "It looks good!";
 
     text.setCharacterSize(25);
