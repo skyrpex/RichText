@@ -6,7 +6,7 @@ CONFIG += C++11
 
 INCLUDEPATH += SFML
 
-LIBS += -lsfml-system-d -lsfml-window-d -lsfml-graphics-d -ljpeg -lGLEW
+LIBS += -lsfml-graphics-d -lsfml-window-d -lsfml-graphics-d
 
 SOURCES += main.cpp \
     ../RichText.cpp
