@@ -1,15 +1,13 @@
 #include <SFML/Graphics.hpp>
-
 #include "../RichText.hpp"
 
 int main()
 {
-    sf::RenderWindow window;
-    window.create(sf::VideoMode(800, 600), "sfe::RichText");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "sfe::RichText");
     window.setFramerateLimit(30);
 
     sf::Font font;
-    font.loadFromFile("/usr/share/fonts/truetype/freefont/FreeMono.ttf");
+    font.loadFromFile("FreeMono.ttf");
 
     sfe::RichText text(font);
     text << sf::Text::Bold       << sf::Color::Cyan  << "This "
@@ -22,16 +20,17 @@ int main()
     text.setPosition(400, 300);
     text.setOrigin(text.getGlobalBounds().width / 2.f, text.getGlobalBounds().height / 2.f);
 
-    while (window.isOpen()) {
+    while (window.isOpen())
+    {
         sf::Event event;
         while (window.pollEvent(event))
+        {
             if (event.type == sf::Event::Closed)
                 window.close();
+        }
 
         window.clear();
         window.draw(text);
         window.display();
     }
-
-    return 0;
 }
