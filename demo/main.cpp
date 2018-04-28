@@ -11,10 +11,10 @@ int main()
 
     sfe::RichText text(font);
     text << sf::Text::Bold       << sf::Color::Cyan  << "This "
-         << sf::Text::Italic     << sf::Color::White << "is\ncool\n"
-         << sf::Text::Regular    << sf::Color::Green << "mate"
+         << sf::Text::Italic     << sf::Color::White << "is\nan\n"
+         << sf::Text::Regular    << sf::Color::Green << "example"
          << sf::Color::White     << ".\n"
-         << sf::Text::Underlined << "I wish I could lick it!";
+         << sf::Text::Underlined << "It looks good!";
  
     text.setCharacterSize(25);
     text.setPosition(400, 300);
