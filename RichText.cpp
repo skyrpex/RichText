@@ -316,7 +316,6 @@ RichText & RichText::operator << (const sf::String& string)
 void RichText::setCharacterColor(std::size_t line, std::size_t pos, sf::Color color)
 {
     assert(line < m_lines.size());
-    assert(line >= 0);
     m_lines[line].setCharacterColor(pos, color);
     updateGeometry();
 }
@@ -326,7 +325,6 @@ void RichText::setCharacterColor(std::size_t line, std::size_t pos, sf::Color co
 void RichText::setCharacterStyle(std::size_t line, std::size_t pos, sf::Text::Style style)
 {
     assert(line < m_lines.size());
-    assert(line >= 0);
     m_lines[line].setCharacterStyle(pos, style);
     updateGeometry();
 }
@@ -336,7 +334,6 @@ void RichText::setCharacterStyle(std::size_t line, std::size_t pos, sf::Text::St
 void RichText::setCharacter(std::size_t line, std::size_t pos, sf::Uint32 character)
 {
     assert(line < m_lines.size());
-    assert(line >= 0);
     m_lines[line].setCharacter(pos, character);
     updateGeometry();
 }
