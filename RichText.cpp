@@ -18,7 +18,6 @@ namespace sfe
 void RichText::Line::setCharacterColor(std::size_t pos, sf::Color color)
 {
     assert(pos < getLength());
-    assert(pos >= 0);
     isolateCharacter(pos);
     std::size_t stringToFormat = convertLinePosToLocal(pos);
     m_texts[stringToFormat].setColor(color);
@@ -29,7 +28,6 @@ void RichText::Line::setCharacterColor(std::size_t pos, sf::Color color)
 void RichText::Line::setCharacterStyle(std::size_t pos, sf::Text::Style style)
 {
     assert(pos < getLength());
-    assert(pos >= 0);
     isolateCharacter(pos);
     std::size_t stringToFormat = convertLinePosToLocal(pos);
     m_texts[stringToFormat].setStyle(style);
@@ -83,7 +81,6 @@ std::size_t RichText::Line::getLength() const
 sf::Color RichText::Line::getCharacterColor(std::size_t pos) const
 {
     assert(pos < getLength());
-    assert(pos >= 0);
     return m_texts[convertLinePosToLocal(pos)].getColor();
 }
 
@@ -92,7 +89,6 @@ sf::Color RichText::Line::getCharacterColor(std::size_t pos) const
 sf::Uint32 RichText::Line::getCharacterStyle(std::size_t pos) const
 {
     assert(pos < getLength());
-    assert(pos >= 0);
     return m_texts[convertLinePosToLocal(pos)].getStyle();
 }
 
@@ -101,7 +97,6 @@ sf::Uint32 RichText::Line::getCharacterStyle(std::size_t pos) const
 sf::Uint32 RichText::Line::getCharacter(std::size_t pos) const
 {
     assert(pos < getLength());
-    assert(pos >= 0);
     // Similar to setCharacter()
     sf::Text& text = m_texts[convertLinePosToLocal(pos)];
     sf::String string = text.getString();
