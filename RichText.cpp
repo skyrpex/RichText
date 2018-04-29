@@ -158,22 +158,21 @@ void RichText::Line::isolateCharacter(std::size_t pos)
 {
     std::size_t localPos = pos;
     std::size_t index = convertLinePosToLocal(localPos);
-    sf::Text copy = m_texts[index];
-    if (copy.getString().getSize() == 1)
+    sf::Text temp = m_texts[index];
+    sf::String string = temp.getString();
+    if (string.getSize() == 1)
         return;
     m_texts.erase(m_texts.begin() + index);
-    // Copy the original text to maintain formatting
-    sf::Text temp = copy;
-    if (localPos != copy.getString().getSize() - 1)
+    if (localPos != string.getSize() - 1)
     {
-        temp.setString(copy.getString().substring(localPos+1));
+        temp.setString(string.substring(localPos+1));
         m_texts.insert(m_texts.begin() + index, temp);
     }
-    temp.setString(copy.getString().substring(localPos, 1));
+    temp.setString(string.substring(localPos, 1));
     m_texts.insert(m_texts.begin() + index, temp);
     if (localPos != 0)
     {
-        temp.setString(copy.getString().substring(0, localPos));
+        temp.setString(string.substring(0, localPos));
         m_texts.insert(m_texts.begin() + index, temp);
     }
 }
