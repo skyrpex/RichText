@@ -69,7 +69,7 @@ void RichText::Line::setFont(const sf::Font &font)
 std::size_t RichText::Line::getLength() const
 {
     std::size_t count = 0;
-    for(sf::Text &text : m_texts)
+    for (sf::Text &text : m_texts)
     {
         count += text.getString().getSize();
     }
@@ -108,12 +108,10 @@ const std::vector<sf::Text> &RichText::Line::getTexts() const
     return m_texts;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::appendText(sf::Text text)
 {
     updateTextAndGeometry(text);
-
     m_texts.push_back(std::move(text));
 }
 
@@ -161,19 +159,19 @@ void RichText::Line::isolateCharacter(std::size_t pos)
     std::size_t localPos = pos;
     std::size_t index = convertLinePosToLocal(localPos);
     sf::Text copy = m_texts[index];
-    if(copy.getString().getSize() == 1)
+    if (copy.getString().getSize() == 1)
         return;
     m_texts.erase(m_texts.begin() + index);
     // Copy the original text to maintain formatting
     sf::Text temp = copy;
-    if(localPos != copy.getString().getSize() - 1)
+    if (localPos != copy.getString().getSize() - 1)
     {
         temp.setString(copy.getString().substring(localPos+1));
         m_texts.insert(m_texts.begin() + index, temp);
     }
     temp.setString(copy.getString().substring(localPos, 1));
     m_texts.insert(m_texts.begin() + index, temp);
-    if(localPos != 0)
+    if (localPos != 0)
     {
         temp.setString(copy.getString().substring(0, localPos));
         m_texts.insert(m_texts.begin() + index, temp);
@@ -186,13 +184,13 @@ void RichText::Line::updateGeometry() const
 {
     m_bounds = sf::FloatRect();
 
-    for (sf::Text &text : m_texts)
+    for (sf::Text& text : m_texts)
         updateTextAndGeometry(text);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void RichText::Line::updateTextAndGeometry(sf::Text &text) const
+void RichText::Line::updateTextAndGeometry(sf::Text& text) const
 {
     // Set text offset
     text.setPosition(m_bounds.width, 0.f);
@@ -213,7 +211,7 @@ RichText::RichText()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-RichText::RichText(const sf::Font &font)
+RichText::RichText(const sf::Font& font)
     : RichText(&font)
 {
 
@@ -221,7 +219,7 @@ RichText::RichText(const sf::Font &font)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-RichText & RichText::operator << (const sf::Color &color)
+RichText & RichText::operator << (const sf::Color& color)
 {
     m_currentColor = color;
     return *this;
@@ -237,7 +235,7 @@ RichText & RichText::operator << (sf::Text::Style style)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<sf::String> explode(const sf::String &string, sf::Uint32 delimiter)
+std::vector<sf::String> explode(const sf::String& string, sf::Uint32 delimiter)
 {
     if (string.isEmpty())
         return std::vector<sf::String>();
@@ -266,7 +264,7 @@ std::vector<sf::String> explode(const sf::String &string, sf::Uint32 delimiter)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-RichText & RichText::operator << (const sf::String &string)
+RichText & RichText::operator << (const sf::String& string)
 {
     // Maybe skip
     if (string.isEmpty())
@@ -359,7 +357,7 @@ void RichText::setCharacterSize(unsigned int size)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void RichText::setFont(const sf::Font &font)
+void RichText::setFont(const sf::Font& font)
 {
     // Maybe skip
     if (m_font == &font)
@@ -457,7 +455,7 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-RichText::RichText(const sf::Font *font)
+RichText::RichText(const sf::Font* font)
     : m_font(font),
       m_characterSize(30),
       m_currentColor(sf::Color::White),
@@ -468,7 +466,7 @@ RichText::RichText(const sf::Font *font)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-sf::Text RichText::createText(const sf::String &string) const
+sf::Text RichText::createText(const sf::String& string) const
 {
     sf::Text text;
     text.setString(string);
