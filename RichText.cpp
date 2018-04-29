@@ -99,8 +99,7 @@ sf::Uint32 RichText::Line::getCharacter(std::size_t pos) const
     assert(pos < getLength());
     // Similar to setCharacter()
     sf::Text& text = m_texts[convertLinePosToLocal(pos)];
-    sf::String string = text.getString();
-    return string[pos];
+    return text.getString()[pos];
 }
 
 
