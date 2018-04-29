@@ -97,7 +97,6 @@ sf::Uint32 RichText::Line::getCharacterStyle(std::size_t pos) const
 sf::Uint32 RichText::Line::getCharacter(std::size_t pos) const
 {
     assert(pos < getLength());
-    // Similar to setCharacter()
     sf::Text& text = m_texts[convertLinePosToLocal(pos)];
     return text.getString()[pos];
 }
@@ -113,10 +112,8 @@ const std::vector<sf::Text> &RichText::Line::getTexts() const
 ////////////////////////////////////////////////////////////////////////////////
 void RichText::Line::appendText(sf::Text text)
 {
-    // Set text offset
     updateTextAndGeometry(text);
 
-    // Push back
     m_texts.push_back(std::move(text));
 }
 
@@ -148,12 +145,8 @@ void RichText::Line::draw(sf::RenderTarget &target, sf::RenderStates states) con
 ////////////////////////////////////////////////////////////////////////////////
 std::size_t RichText::Line::convertLinePosToLocal(std::size_t& pos) const
 {
-    // Trying to access something out-of-bounds is Undefined Behaviour.
-    // Let's not let that happen, OK?
     assert(pos < getLength());
-    // Store our current position in the text vector
     std::size_t arrayIndex = 0;
-    // Here, we select the right sf::Text to change
     for (; pos >= m_texts[arrayIndex].getString().getSize(); ++arrayIndex)
     {
         pos -= m_texts[arrayIndex].getString().getSize();
