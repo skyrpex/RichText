@@ -22,6 +22,12 @@ typedef Rect<float> FloatRect;
 
 namespace sfe
 {
+struct RichColor
+{
+	sf::Color fill = sf::Color::White;
+	sf::Color outline = sf::Color::Transparent;
+	float thickness = 0.f;
+};
 
 class RichText : public sf::Drawable, public sf::Transformable
 {
@@ -158,6 +164,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
+	RichText& operator << (const RichColor& color);
     RichText & operator << (const sf::Color &color);
     RichText & operator << (sf::Text::Style style);
     RichText & operator << (const sf::String &string);
@@ -267,7 +274,7 @@ private:
     const sf::Font *m_font;            ///< Font
     unsigned int m_characterSize;      ///< Character size
     mutable sf::FloatRect m_bounds;    ///< Local bounds
-    sf::Color m_currentFillColor;      ///< Last used fill color
+    RichColor m_currentColor;      ///< Last used fill color
     sf::Text::Style m_currentStyle;    ///< Last style used
 };
 
