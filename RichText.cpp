@@ -20,7 +20,7 @@ void RichText::Line::setCharacterColor(std::size_t pos, sf::Color color)
     assert(pos < getLength());
     isolateCharacter(pos);
     std::size_t stringToFormat = convertLinePosToLocal(pos);
-    m_texts[stringToFormat].setColor(color);
+    m_texts[stringToFormat].setFillColor(color);
     updateGeometry();
 }
 
@@ -81,7 +81,7 @@ std::size_t RichText::Line::getLength() const
 sf::Color RichText::Line::getCharacterColor(std::size_t pos) const
 {
     assert(pos < getLength());
-    return m_texts[convertLinePosToLocal(pos)].getColor();
+    return m_texts[convertLinePosToLocal(pos)].getFillColor();
 }
 
 
@@ -220,11 +220,17 @@ RichText::RichText(const sf::Font& font)
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+RichText& RichText::operator << (const RichColor& color)
+{
+	m_currentColor = color;
+	return *this;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 RichText & RichText::operator << (const sf::Color& color)
 {
-    m_currentFillColor = color;
+    m_currentColor.fill = color;
     return *this;
 }
 
@@ -458,7 +464,7 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 RichText::RichText(const sf::Font* font)
     : m_font(font),
       m_characterSize(30),
-      m_currentFillColor(sf::Color::White),
+      m_currentColor{ sf::Color::White, sf::Color::Transparent },
       m_currentStyle(sf::Text::Regular)
 {
 
@@ -470,7 +476,9 @@ sf::Text RichText::createText(const sf::String& string) const
 {
     sf::Text text;
     text.setString(string);
-    text.setFillColor(m_currentFillColor);
+    text.setFillColor(m_currentColor.fill);
+    text.setOutlineColor(m_currentColor.outline);
+    text.setOutlineThickness(m_currentColor.thickness);
     text.setStyle(m_currentStyle);
     text.setCharacterSize(m_characterSize);
     if (m_font)
