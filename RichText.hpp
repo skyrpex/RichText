@@ -22,7 +22,7 @@ typedef Rect<float> FloatRect;
 
 namespace sfe
 {
-struct RichColor
+struct TextStroke
 {
 	sf::Color fill = sf::Color::White;
 	sf::Color outline = sf::Color::Transparent;
@@ -164,7 +164,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-	RichText& operator << (const RichColor& color);
+	RichText & operator << (const TextStroke &stroke);
     RichText & operator << (const sf::Color &color);
     RichText & operator << (sf::Text::Style style);
     RichText & operator << (const sf::String &string);
@@ -274,7 +274,7 @@ private:
     const sf::Font *m_font;            ///< Font
     unsigned int m_characterSize;      ///< Character size
     mutable sf::FloatRect m_bounds;    ///< Local bounds
-    RichColor m_currentColor;      ///< Last used fill color
+    TextStroke m_currentStroke;        ///< Last used stroke
     sf::Text::Style m_currentStyle;    ///< Last style used
 };
 
