@@ -221,16 +221,16 @@ RichText::RichText(const sf::Font& font)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-RichText& RichText::operator << (const RichColor& color)
+RichText& RichText::operator << (const TextStroke& stroke)
 {
-	m_currentColor = color;
+	m_currentStroke = stroke;
 	return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 RichText & RichText::operator << (const sf::Color& color)
 {
-    m_currentColor.fill = color;
+    m_currentStroke.fill = color;
     return *this;
 }
 
@@ -464,7 +464,7 @@ void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 RichText::RichText(const sf::Font* font)
     : m_font(font),
       m_characterSize(30),
-      m_currentColor{ sf::Color::White, sf::Color::Transparent },
+      m_currentStroke{ sf::Color::White, sf::Color::Transparent },
       m_currentStyle(sf::Text::Regular)
 {
 
@@ -476,9 +476,9 @@ sf::Text RichText::createText(const sf::String& string) const
 {
     sf::Text text;
     text.setString(string);
-    text.setFillColor(m_currentColor.fill);
-    text.setOutlineColor(m_currentColor.outline);
-    text.setOutlineThickness(m_currentColor.thickness);
+    text.setFillColor(m_currentStroke.fill);
+    text.setOutlineColor(m_currentStroke.outline);
+    text.setOutlineThickness(m_currentStroke.thickness);
     text.setStyle(m_currentStyle);
     text.setCharacterSize(m_characterSize);
     if (m_font)
