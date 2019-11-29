@@ -223,8 +223,15 @@ RichText::RichText(const sf::Font& font)
 ////////////////////////////////////////////////////////////////////////////////
 RichText& RichText::operator << (const TextStroke& stroke)
 {
-	m_currentStroke = stroke;
-	return *this;
+    m_currentStroke = stroke;
+    return *this;
+}
+
+RichText& RichText::operator << (const Outline& outline)
+{
+    m_currentStroke.outline = outline.outline;
+    m_currentStroke.thickness = outline.thickness;
+    return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

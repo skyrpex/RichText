@@ -24,9 +24,15 @@ namespace sfe
 {
 struct TextStroke
 {
-	sf::Color fill = sf::Color::White;
-	sf::Color outline = sf::Color::Transparent;
-	float thickness = 0.f;
+    sf::Color fill = sf::Color::White;
+    sf::Color outline = sf::Color::Transparent;
+    float thickness = 0.f;
+};
+
+struct Outline
+{
+    sf::Color outline = sf::Color::Transparent;
+    float thickness = 0.f;
 };
 
 class RichText : public sf::Drawable, public sf::Transformable
@@ -126,7 +132,7 @@ public:
         // Get the index of the sf::Text containing the pos'th character.
         // Also changes pos to the position of the character in the sf::Text.
         //////////////////////////////////////////////////////////////////////
-        std::size_t convertLinePosToLocal(std::size_t& pos) const;
+        std::size_t convertLinePosToLocal(std::size_t &pos) const;
 
         //////////////////////////////////////////////////////////////////////
         // Split a string to isolate the given character
@@ -164,7 +170,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-	RichText & operator << (const TextStroke &stroke);
+    RichText & operator << (const TextStroke &stroke);
+    RichText & operator << (const Outline &outline);
     RichText & operator << (const sf::Color &color);
     RichText & operator << (sf::Text::Style style);
     RichText & operator << (const sf::String &string);
