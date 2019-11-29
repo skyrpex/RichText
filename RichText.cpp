@@ -2,6 +2,7 @@
 // Headers
 ////////////////////////////////////////////////////////////////////////////////
 #include <cassert>
+#include <cmath>
 
 #include "RichText.hpp"
 
@@ -199,8 +200,8 @@ void RichText::Line::updateTextAndGeometry(sf::Text& text) const
     text.setPosition(m_bounds.width, 0.f);
 
     // Update bounds
-    int lineSpacing = text.getFont()->getLineSpacing(text.getCharacterSize());
-    m_bounds.height = std::max(m_bounds.height, static_cast<float>(lineSpacing));
+    float lineSpacing = std::floor(text.getFont()->getLineSpacing(text.getCharacterSize()));
+    m_bounds.height = std::max(m_bounds.height, lineSpacing);
     m_bounds.width += text.getGlobalBounds().width;
 }
 
