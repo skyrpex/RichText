@@ -14,7 +14,8 @@ int main()
          << sf::Text::Italic     << sf::Color::White << "is\nan\n"
          << sf::Text::Regular    << sf::Color::Green << "example"
          << sf::Color::White     << ".\n"
-         << sf::Text::Underlined << "It looks good!";
+         << sf::Text::Underlined << "It looks good!\n" << sf::Text::StrikeThrough
+         << sfe::Outline{ sf::Color::Blue, 3.f } << "Really good!";
  
     text.setCharacterSize(25);
     text.setPosition(400, 300);
